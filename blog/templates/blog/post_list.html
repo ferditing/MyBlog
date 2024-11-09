@@ -8,7 +8,7 @@
     <h1>Blog Posts</h1>
     {% for post in posts %}
         <div>
-            <h2>{{ post.title }}</h2>
+            <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
             <p>{{ post.content|truncatewords:30 }}</p>  <!-- Display the first 30 words -->
             <small>Published on {{ post.created_at|date:"F j, Y" }}</small>
             <hr>
