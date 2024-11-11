@@ -31,3 +31,16 @@ def edit_post(request, post_id):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/edit_post.html', {'form': form, 'post': post})
+
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    if request.method == "POST":
+        post.delete()
+        return redirect('post_list')  # Redirect to post list after deletion
+    
+    return render(request, 'blog/delete_post.html', {'post': post})
+
+def manage_posts(request):
+    posts = Post.objects.all().order_by('-created_at')  # Fetch all posts ordered by latest
+    return render(request, 'blog/manage_posts.html', {'posts': posts})
