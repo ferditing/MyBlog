@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,  get_object_or_404
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 
 def post_list(request):
@@ -8,8 +8,21 @@ def post_list(request):
     return render(request, 'blog/post_list.html', {'posts': posts})
 
 def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)  # Fetch the post by ID or show a 404 if not found
-    return render(request, 'blog/post_detail.html', {'post': post})
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all()  # Get all comments related to this post
+    
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post  # Link the comment to the post
+            comment.author = request.user  # Set the comment's author to the logged-in user
+            comment.save()
+            return redirect('post_detail', post_id=post.id)  # Redirect to the post detail page
+    else:
+        form = CommentForm()
+    
+    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
 
 @login_required
 def add_post(request):
