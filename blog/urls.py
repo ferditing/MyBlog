@@ -11,4 +11,5 @@ urlpatterns = [
     path('manage/', views.manage_posts, name='manage_posts'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='post_list'), name='logout'),
+    path('signup/', views.signup_view, name='signup'),
 ]

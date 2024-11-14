@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect,  get_object_or_404
 from .models import Post
-from .forms import PostForm, CommentForm
+from django.contrib.auth import login
+from .forms import PostForm, CommentForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 
 def post_list(request):
@@ -62,3 +63,16 @@ def delete_post(request, post_id):
 def manage_posts(request):
     posts = Post.objects.all().order_by('-created_at')  # Fetch all posts ordered by latest
     return render(request, 'blog/manage_posts.html', {'posts': posts})
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in after successful signup
+            return redirect('post_list')  # Redirect to the home page or wherever you want
+    else:
+        form = SignUpForm()
+    
+    return render(request, 'registration/signup.html', {'form': form})
